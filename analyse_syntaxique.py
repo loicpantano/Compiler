@@ -37,7 +37,7 @@ class FloParser(Parser):
 	def ecrire(self, p):
 		return arbre_abstrait.Ecrire(p.expr) #p.expr = p[2]
 		
-	@_('expr "+" expr')
+	@_('expr "+" facteur')
 	def expr(self, p):
 		return arbre_abstrait.Operation('+',p[0],p[2])
 
@@ -53,7 +53,7 @@ class FloParser(Parser):
 	def expr(self, p):
 		return arbre_abstrait.Operation('%',p[2],p[0])
 	
-	@_('expr "*" expr')
+	@_('expr "*" facteur')
 	def expr(self, p):
 		return arbre_abstrait.Operation('*',p[0],p[2])
 	
@@ -66,13 +66,16 @@ class FloParser(Parser):
 		return arbre_abstrait.Operation('=',p[0],p[2])
 
 	@_('"(" expr ")"')
-	def expr(self, p):
+	def facteur(self, p):
 		return p.expr #ou p[1]
 		
 	@_('ENTIER')
-	def expr(self, p):
+	def facteur(self, p):
 		return arbre_abstrait.Entier(p.ENTIER) #p.ENTIER = p[0]
 	
+	@_('facteur')
+	def expr(self, p):
+		return p.facteur
 
 
 if __name__ == '__main__':
