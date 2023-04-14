@@ -7,6 +7,11 @@ class FloParser(Parser):
 	# On récupère la liste des lexèmes de l'analyse lexicale
 	tokens = FloLexer.tokens
 
+	precedence = (
+       ('left', '+', '-'),
+       ('left', '*', '/', '%'),
+    )
+
 	# Règles gramaticales et actions associées
 
 	@_('listeInstructions')
@@ -40,13 +45,13 @@ class FloParser(Parser):
 	def expr(self, p):
 		return arbre_abstrait.Operation('-',p[0],p[2])
 
-	@_('expr "/" expr')
+	@_('expr "/" facteur')
 	def expr(self, p):
-		return arbre_abstrait.Operation('/',p[0],p[2])
+		return arbre_abstrait.Operation('/',p[2],p[0])
 	
-	@_('expr "%" expr')
+	@_('expr "%" facteur')
 	def expr(self, p):
-		return arbre_abstrait.Operation('%',p[0],p[2])
+		return arbre_abstrait.Operation('%',p[2],p[0])
 	
 	@_('expr "*" expr')
 	def expr(self, p):
