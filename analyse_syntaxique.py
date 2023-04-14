@@ -56,9 +56,9 @@ class FloParser(Parser):
 	def facteur(self, p):
 		return p.expr #ou p[1]
 	
-	@_('"-""(" expr ")"')
+	@_('"-" "(" expr ")"')
 	def facteur(self, p):
-		return arbre_abstrait.Operation('-',arbre_abstrait.Entier(0),p.expr)
+		return arbre_abstrait.Operation('*',arbre_abstrait.Entier(-1),p.expr)
 		
 	@_('ENTIER')
 	def facteur(self, p):
