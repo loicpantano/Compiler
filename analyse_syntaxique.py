@@ -7,11 +7,6 @@ class FloParser(Parser):
 	# On récupère la liste des lexèmes de l'analyse lexicale
 	tokens = FloLexer.tokens
 
-	precedence = (
-       ('left', '+', '-'),
-       ('left', '*', '/', '%'),
-    )
-
 	# Règles gramaticales et actions associées
 
 	@_('listeInstructions')
@@ -37,45 +32,46 @@ class FloParser(Parser):
 	def ecrire(self, p):
 		return arbre_abstrait.Ecrire(p.expr) #p.expr = p[2]
 		
-	@_('expr "+" facteur')
+	@_('expr "+" produit')
 	def expr(self, p):
 		return arbre_abstrait.Operation('+',p[0],p[2])
-
-	@_('expr "-" expr')
+	
+	@_('expr "-" produit')
 	def expr(self, p):
 		return arbre_abstrait.Operation('-',p[0],p[2])
-
-	@_('expr "/" facteur')
-	def expr(self, p):
-		return arbre_abstrait.Operation('/',p[2],p[0])
 	
-	@_('expr "%" facteur')
-	def expr(self, p):
-		return arbre_abstrait.Operation('%',p[2],p[0])
-	
-	@_('expr "*" facteur')
-	def expr(self, p):
+	@_('produit "*" facteur')
+	def produit(self, p):
 		return arbre_abstrait.Operation('*',p[0],p[2])
 	
-	@_('expr "," expr')
-	def expr(self, p):
-		return arbre_abstrait.Operation(',',p[0],p[2])
-
-	@_('expr "=" expr')
-	def expr(self, p):
-		return arbre_abstrait.Operation('=',p[0],p[2])
+	@_('produit "/" facteur')
+	def produit(self, p):
+		return arbre_abstrait.Operation('/',p[0],p[2])
+	
+	@_('produit "%" facteur')
+	def produit(self, p):
+		return arbre_abstrait.Operation('%',p[0],p[2])
 
 	@_('"(" expr ")"')
 	def facteur(self, p):
 		return p.expr #ou p[1]
+	
+	@_('"-""(" expr ")"')
+	def facteur(self, p):
+		return arbre_abstrait.Operation('-',arbre_abstrait.Entier(0),p.expr)
 		
 	@_('ENTIER')
 	def facteur(self, p):
 		return arbre_abstrait.Entier(p.ENTIER) #p.ENTIER = p[0]
 	
 	@_('facteur')
-	def expr(self, p):
+	def produit(self, p):
 		return p.facteur
+	
+	@_('produit')
+	def expr(self, p):
+		return p.produit
+
 
 
 if __name__ == '__main__':
