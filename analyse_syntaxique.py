@@ -36,9 +36,41 @@ class FloParser(Parser):
 	def expr(self, p):
 		return arbre_abstrait.Operation('+',p[0],p[2])
 
+	@_('expr "-" expr')
+	def expr(self, p):
+		return arbre_abstrait.Operation('-',p[0],p[2])
+
+	@_('expr "/" expr')
+	def expr(self, p):
+		return arbre_abstrait.Operation('/',p[0],p[2])
+	
+	@_('expr "%" expr')
+	def expr(self, p):
+		return arbre_abstrait.Operation('%',p[0],p[2])
+	
 	@_('expr "*" expr')
 	def expr(self, p):
 		return arbre_abstrait.Operation('*',p[0],p[2])
+	
+	@_('expr "," expr')
+	def expr(self, p):
+		return arbre_abstrait.Operation(',',p[0],p[2])
+
+	@_('expr "=" expr')
+	def expr(self, p):
+		return arbre_abstrait.Operation('=',p[0],p[2])
+
+	@_('expr ", " expr')
+	def expr(self, p):
+		return arbre_abstrait.Operation(', ',p[0],p[2])
+	
+	@_('expr "(', ')" expr')
+	def expr(self, p):
+		return arbre_abstrait.Operation('(', ')',p[0],p[2])
+
+	@_('expr "{', '}" expr')
+	def expr(self, p):
+		return arbre_abstrait.Operation('{', '}',p[0],p[2])
 
 	@_('"(" expr ")"')
 	def expr(self, p):
@@ -47,6 +79,8 @@ class FloParser(Parser):
 	@_('ENTIER')
 	def expr(self, p):
 		return arbre_abstrait.Entier(p.ENTIER) #p.ENTIER = p[0]
+	
+
 
 if __name__ == '__main__':
 	lexer = FloLexer()
