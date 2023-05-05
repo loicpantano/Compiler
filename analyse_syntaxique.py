@@ -72,7 +72,13 @@ class FloParser(Parser):
 	def expr(self, p):
 		return p.produit
 
-
+	@_('LIRE "(" ")"')
+	def facteur(self,p):
+		return arbre_abstrait.Lire()
+	
+	@_('IDENTIFIANT')
+	def facteur(self,p):
+		return arbre_abstrait.Identifiant(p.IDENTIFIANT)
 
 if __name__ == '__main__':
 	lexer = FloLexer()

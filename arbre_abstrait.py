@@ -46,3 +46,15 @@ class Entier:
 	def afficher(self,indent=0):
 		afficher("[Entier:"+str(self.valeur)+"]",indent)
 
+class Lire:
+    def __init__(self):
+        self.nom = "Lire"
+    def afficher(self,indent=0):
+        afficher("<Lire>",indent)
+        afficher("</Lire>",indent)
+	
+class Identifiant:
+	def __init__(self, nom):
+		self.nom = nom
+	def afficher(self,indent=0):
+		afficher("[Identifiant:"+self.nom+"]",indent)
