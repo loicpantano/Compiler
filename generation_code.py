@@ -117,7 +117,7 @@ def gen_operation(operation):
 	nasm_instruction("pop", "ebx", "", "", "dépile la seconde operande dans ebx")
 	nasm_instruction("pop", "eax", "", "", "dépile la permière operande dans eax")
 	
-	code = {"+":"add","*":"imul","-":"sub","/":"div"} #Un dictionnaire qui associe à chaque opérateur sa fonction nasm
+	code = {"+":"add","*":"imul","-":"sub","/":"div","%":"div"} #Un dictionnaire qui associe à chaque opérateur sa fonction nasm
 	#Voir: https://www.bencode.net/blob/nasmcheatsheet.pdf
 	if op in ['+']:
 		nasm_instruction(code[op], "eax", "ebx", "", "effectue l'opération eax" +op+"ebx et met le résultat dans eax" )
@@ -128,6 +128,10 @@ def gen_operation(operation):
 	if op == '/':
 		nasm_instruction("mov", "edx", "0", "", "met 0 dans edx pour éviter un problème de division")
 		nasm_instruction(code[op], "ebx", "", "", "effectue l'opération eax" +op+"ebx et met le résultat dans eax" )
+	if op == '%':
+		nasm_instruction("mov", "edx", "0", "", "met 0 dans edx pour éviter un problème de division")
+		nasm_instruction(code[op], "ebx", "", "", "effectue l'opération eax" +op+"ebx et met le résultat dans eax" )
+		nasm_instruction("mov", "eax", "edx", "", "met le reste de la division dans eax")
 
 	nasm_instruction("push",  "eax" , "", "", "empile le résultat");	
 

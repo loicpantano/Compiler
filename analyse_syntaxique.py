@@ -32,12 +32,12 @@ class FloParser(Parser):
 	def ecrire(self, p):
 		return arbre_abstrait.Ecrire(p.expr) #p.expr = p[2]
 		
-	@_('expr "+" produit')
-	def expr(self, p):
+	@_('nonboolean "+" produit')
+	def nonboolean(self, p):
 		return arbre_abstrait.Operation('+',p[0],p[2])
 	
-	@_('expr "-" produit')
-	def expr(self, p):
+	@_('nonboolean "-" produit')
+	def nonboolean(self, p):
 		return arbre_abstrait.Operation('-',p[0],p[2])
 	
 	@_('produit "*" facteur')
@@ -52,13 +52,13 @@ class FloParser(Parser):
 	def produit(self, p):
 		return arbre_abstrait.Operation('%',p[0],p[2])
 
-	@_('"(" expr ")"')
+	@_('"(" nonboolean ")"')
 	def facteur(self, p):
-		return p.expr #ou p[1]
+		return p.nonboolean #ou p[1]
 	
-	@_('"-" "(" expr ")"')
+	@_('"-" "(" nonboolean ")"')
 	def facteur(self, p):
-		return arbre_abstrait.Operation('*',arbre_abstrait.Entier(-1),p.expr)
+		return arbre_abstrait.Operation('*',arbre_abstrait.Entier(-1),p.nonboolean)
 		
 	@_('ENTIER')
 	def facteur(self, p):
@@ -69,7 +69,7 @@ class FloParser(Parser):
 		return p.facteur
 	
 	@_('produit')
-	def expr(self, p):
+	def nonboolean(self, p):
 		return p.produit
 
 	@_('LIRE "(" ")"')
@@ -98,6 +98,51 @@ class FloParser(Parser):
 		l = arbre_abstrait.ListeExpressions()
 		l.expressions.append(p[0])
 		return l
+	
+	@_('boolean')
+	def expr(self, p):
+		return p.boolean
+	
+	@_('nonboolean')
+	def expr(self, p):
+		return p.nonboolean
+	
+	@_('NON boolean')
+	def boolean(self, p):
+		return arbre_abstrait.Negation(p.boolean)
+
+	@_('VRAI')
+	def boolean(self, p):
+		return arbre_abstrait.Boolean(True)
+	
+	@_('FAUX')
+	def boolean(self, p):
+		return arbre_abstrait.Boolean(False)
+	
+	@_('nonboolean INFERIEUR nonboolean')
+	def boolean(self, p):
+		return arbre_abstrait.Comparaison('<',p[0],p[2])
+	
+	@_('nonboolean SUPERIEUR nonboolean')
+	def boolean(self, p):
+		return arbre_abstrait.Comparaison('>',p[0],p[2])
+	
+	@_('nonboolean EGAL nonboolean')
+	def boolean(self, p):
+		return arbre_abstrait.Comparaison('==',p[0],p[2])
+	
+	@_('nonboolean DIFFERENT nonboolean')
+	def boolean(self, p):
+		return arbre_abstrait.Comparaison('!=',p[0],p[2])
+	
+	@_('nonboolean INFERIEUR_OU_EGAL nonboolean')
+	def boolean(self, p):
+		return arbre_abstrait.Comparaison('<=',p[0],p[2])
+	
+	@_('nonboolean SUPERIEUR_OU_EGAL nonboolean')
+	def boolean(self, p):
+		return arbre_abstrait.Comparaison('>=',p[0],p[2])
+	
 
 
 if __name__ == '__main__':

@@ -36,7 +36,6 @@ class Operation:
 		self.exp2 = exp2
 	def afficher(self,indent=0):
 		afficher(f"<operation \"{self.op}\" >", indent)
-#		afficher(self.op,indent+1)
 		self.exp1.afficher(indent+1)
 		self.exp2.afficher(indent+1)
 		afficher("</operation>",indent)
@@ -45,6 +44,33 @@ class Entier:
 		self.valeur = valeur
 	def afficher(self,indent=0):
 		afficher("[Entier:"+str(self.valeur)+"]",indent)
+
+class Boolean:
+	def __init__(self, valeur):
+		self.valeur = valeur
+
+	def afficher(self, indent=0):
+		afficher("[Boolean:"+str(self.valeur)+"]",indent)
+
+class Negation:
+	def __init__(self, valeur):
+		self.valeur = valeur
+
+	def afficher(self, indent=0):
+		afficher("<Negation>", indent)
+		self.valeur.afficher(indent+1)
+		afficher("</Negation>", indent)
+
+class Comparaison:
+	def __init__(self,op,exp1,exp2):
+		self.exp1 = exp1
+		self.op = op
+		self.exp2 = exp2
+	def afficher(self,indent=0):
+		afficher(f"<comparaison \"{self.op}\" >", indent)
+		self.exp1.afficher(indent+1)
+		self.exp2.afficher(indent+1)
+		afficher("</comparaison>",indent)
 
 class Lire:
     def __init__(self):
@@ -81,3 +107,4 @@ class ListeExpressions:
 		for expression in self.expressions:
 			expression.afficher(indent+1)
 		afficher("</ListeExpressions>", indent)
+

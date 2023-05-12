@@ -1,2 +1,3 @@
 ecrire(lire() + 2);
 ecrire(a + 4 * b);
+ecrire(fonction(a + 2) + 3);

@@ -1,4 +1,4 @@
-INPUT = exemple1 exemple2 exemple3 exemple4 test
+INPUT = exemple1 groscalcul47 fonctionvariablelire comparators test
 
 assembleur_vers_exercutable: generation_code_nasm
 	for a in $(INPUT); do echo "Assemblage: " $${a}; nasm -f elf -g -F dwarf output/$${a}.nasm; ld -m elf_i386 -o output/$${a} output/$${a}.o; rm output/$${a}.o; rm output/$${a}.nasm; done;
