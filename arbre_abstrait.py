@@ -58,3 +58,26 @@ class Identifiant:
 		self.nom = nom
 	def afficher(self,indent=0):
 		afficher("[Identifiant:"+self.nom+"]",indent)
+
+class AppelFonction:
+	def __init__(self, nom, listeExpressions = None):
+		self.nom = nom
+		self.listeExpressions = listeExpressions
+
+	def afficher(self, indent=0):
+		afficher("<AppelFonction>", indent)
+		afficher("<" +self.nom + ">", indent+1)
+		if(self.listeExpressions != None):
+			self.listeExpressions.afficher(indent+2)
+		afficher("</" +self.nom + ">", indent+1)
+		afficher("</AppelFonction>", indent)
+
+class ListeExpressions:
+	def __init__(self ):
+		self.expressions = []
+
+	def afficher(self, indent=0):
+		afficher("<ListeExpressions>", indent)
+		for expression in self.expressions:
+			expression.afficher(indent+1)
+		afficher("</ListeExpressions>", indent)

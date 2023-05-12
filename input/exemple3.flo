@@ -1,2 +1,2 @@
-ecrire(lire());
+ecrire(lire() + 2);
 ecrire(a + 4 * b);
