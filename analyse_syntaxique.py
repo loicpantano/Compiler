@@ -28,7 +28,6 @@ class FloParser(Parser):
 	def instruction(self, p):
 		return p[0]
 	
-	
 	@_('TYPE IDENTIFIANT ";"')
 	def instruction(self, p):
 		return arbre_abstrait.Declaration(p.TYPE, p.IDENTIFIANT)
@@ -36,6 +35,23 @@ class FloParser(Parser):
 	@_('IDENTIFIANT "=" expr ";"')
 	def instruction(self, p):
 		return arbre_abstrait.Affectation(p.IDENTIFIANT, p.expr)
+	
+	@_('TYPE IDENTIFIANT "=" expr ";"')
+	def instruction(self, p):
+		return arbre_abstrait.DeclarationAffectation(p.TYPE, p.IDENTIFIANT, p.expr)
+	
+	@_('SI "(" expr ")" "{" listeInstructions "}" branchage')
+	def instruction(self, p):
+		return arbre_abstrait.Si(p.expr, p.listeInstructions)
+	
+	@_('SINONSI "(" expr ")" "{" listeInstructions "}" branchage')
+	def branchage(self, p):
+		return arbre_abstrait.SinonSi(p.expr, p.listeInstructions)
+	
+	@_('SINON "{" listeInstructions "}"')
+	def branchage(self, p):
+		return arbre_abstrait.Sinon(p.listeInstructions)
+
 			
 	@_('ECRIRE "(" expr ")" ";"')
 	def ecrire(self, p):
@@ -132,9 +148,9 @@ class FloParser(Parser):
 	def booleanfinal(self, p):
 		return arbre_abstrait.Boolean(False)
 	
-	@_('NON boolean')
+	@_('NON booleanfinal')
 	def facteurbool(self, p):
-		return arbre_abstrait.Negation(p.boolean)
+		return arbre_abstrait.Negation(p.booleanfinal)
 	
 	@_('produitbool OU facteurbool')
 	def produitbool(self, p):
@@ -143,11 +159,11 @@ class FloParser(Parser):
 	@_('boolean ET produitbool')
 	def boolean(self, p):
 		return arbre_abstrait.Operation('ET',p[0],p[2])
-
+	
 	@_('booleanfinal')
 	def facteurbool(self, p):
 		return p.booleanfinal
-	
+
 	@_('facteurbool')
 	def produitbool(self, p):
 		return p.facteurbool
@@ -155,42 +171,49 @@ class FloParser(Parser):
 	@_('produitbool')
 	def boolean(self, p):
 		return p.produitbool
-
-
-
-
-
-
-
-
-
-
-
 	
 	@_('nonboolean INFERIEUR nonboolean')
-	def boolean(self, p):
+	def booleanfinal(self, p):
 		return arbre_abstrait.Comparaison('<',p[0],p[2])
 	
 	@_('nonboolean SUPERIEUR nonboolean')
-	def boolean(self, p):
+	def booleanfinal(self, p):
 		return arbre_abstrait.Comparaison('>',p[0],p[2])
 	
 	@_('nonboolean EGAL nonboolean')
-	def boolean(self, p):
+	def booleanfinal(self, p):
 		return arbre_abstrait.Comparaison('==',p[0],p[2])
 	
 	@_('nonboolean DIFFERENT nonboolean')
-	def boolean(self, p):
+	def booleanfinal(self, p):
 		return arbre_abstrait.Comparaison('!=',p[0],p[2])
 	
 	@_('nonboolean INFERIEUR_OU_EGAL nonboolean')
-	def boolean(self, p):
+	def booleanfinal(self, p):
 		return arbre_abstrait.Comparaison('<=',p[0],p[2])
 	
 	@_('nonboolean SUPERIEUR_OU_EGAL nonboolean')
-	def boolean(self, p):
+	def booleanfinal(self, p):
 		return arbre_abstrait.Comparaison('>=',p[0],p[2])
 	
+	@_('TYPE IDENTIFIANT "(" listeParametres ")" "{" listeInstructions "}"')
+	def instruction(self, p):
+		return arbre_abstrait.Fonction(p.IDENTIFIANT, p.listeParametres, p.listeInstructions)
+	
+	@_('parametre "," listeParametres')
+	def listeParametres(self, p):
+		p[2].parametres.insert(0, p[0])
+		return p[2]
+	
+	@_('parametre')
+	def listeParametres(self, p):
+		l = arbre_abstrait.ListeParametres()
+		l.parametres.append(p[0])
+		return l
+	
+	@_('TYPE IDENTIFIANT')
+	def parametre(self, p):
+		return arbre_abstrait.Parametre(p.IDENTIFIANT)
 	
 
 

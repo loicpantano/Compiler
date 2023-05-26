@@ -8,7 +8,7 @@ class FloLexer(Lexer):
 	#Les caractères litéraux sont des caractères uniques qui sont retournés tel quel quand rencontré par l'analyse lexicale. 
 	#Les litéraux sont vérifiés en dernier, après toutes les autres règles définies par des expressions régulières.
 	#Donc, si une règle commence par un de ces littérals (comme INFERIEUR_OU_EGAL), cette règle aura la priorité.
-	literals = { '+','*','(',')',";",'-','/','%',',','='}
+	literals = { '+','*','(',')',";",'-','/','%',',','=','{','}'}
 	
 	# chaines contenant les caractère à ignorer. Ici espace et tabulation
 	ignore = ' \t'
@@ -27,7 +27,7 @@ class FloLexer(Lexer):
 	IDENTIFIANT['ou'] = OU
 	IDENTIFIANT['non'] = NON
 	IDENTIFIANT['si'] = SI
-	IDENTIFIANT['sinonsi'] = SINONSI
+	IDENTIFIANT['sinon_si'] = SINONSI
 	IDENTIFIANT['sinon'] = SINON
 	IDENTIFIANT['tantque'] = TANTQUE
 	IDENTIFIANT['retourner'] = RETOURNER
@@ -52,6 +52,16 @@ class FloLexer(Lexer):
 	@_(r'\n+')
 	def ignore_newline(self, t):
 		self.lineno += t.value.count('\n')
+	
+	# Ignore commentaires et lignes vides
+	@_(r'\#[^\n]*')
+	def ignore_comment(self, t):
+		pass
+	
+	# Ignore /t et /r 
+	@_(r'\r')
+	def ignore_carriage_return(self, t):
+		pass
 
 	# En cas d'erreur, indique où elle se trouve
 	def error(self, t):
