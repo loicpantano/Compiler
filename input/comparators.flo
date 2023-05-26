@@ -4,3 +4,5 @@ ecrire(1 + 2 <= 3 * 4);
 ecrire(1 + 2 >= 3 * 4);
 ecrire(1 + 2 == 3 * 4);
 ecrire(1 + 2 != 3 * 4);
+ecrire(non vrai);
+ecrire(non faux);

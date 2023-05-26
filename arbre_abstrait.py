@@ -29,6 +29,26 @@ class Ecrire:
 		self.exp.afficher(indent+1)
 		afficher("</ecrire>",indent)
 		
+class Declaration:
+	def __init__(self, type, nom):
+		self.type = type
+		self.nom = nom
+	def afficher(self,indent=0):
+		afficher("<declaration>",indent)
+		afficher("[type:"+self.type+"]",indent+1)
+		afficher("[nom:"+self.nom+"]",indent+1)
+		afficher("</declaration>",indent)
+
+class Affectation:
+	def __init__(self,nom,exp):
+		self.nom = nom
+		self.exp = exp
+	def afficher(self,indent=0):
+		afficher("<affectation>",indent)
+		afficher("[nom:"+self.nom+"]",indent+1)
+		self.exp.afficher(indent+1)
+		afficher("</affectation>",indent)
+
 class Operation:
 	def __init__(self,op,exp1,exp2):
 		self.exp1 = exp1
