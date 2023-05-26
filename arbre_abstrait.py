@@ -108,3 +108,39 @@ class ListeExpressions:
 			expression.afficher(indent+1)
 		afficher("</ListeExpressions>", indent)
 
+class Fonction:
+	def __init__(self, nom, listeParametres, listeInstructions):
+		self.nom = nom
+		self.listeParametres = listeParametres
+		self.listeInstructions = listeInstructions
+
+	def afficher(self, indent=0):
+		afficher("<Fonction>", indent)
+		afficher("<" +self.nom + ">", indent+1)
+		self.listeParametres.afficher(indent+2)
+		self.listeInstructions.afficher(indent+2)
+		afficher("</" +self.nom + ">", indent+1)
+		afficher("</Fonction>", indent)
+
+class ListeParametres:
+	def __init__(self):
+		self.parametres = []
+
+	def afficher(self, indent=0):
+		afficher("<ListeParametres>", indent)
+		for parametre in self.parametres:
+			parametre.afficher(indent+1)
+		afficher("</ListeParametres>", indent)
+
+class Parametre:
+	def __init__(self, nom):
+		self.nom = nom
+
+	def afficher(self, indent=0):
+		afficher("<Parametre>", indent)
+		afficher("<" +self.nom + ">", indent+1)
+		afficher("</" +self.nom + ">", indent+1)
+		afficher("</Parametre>", indent)
+
+
+

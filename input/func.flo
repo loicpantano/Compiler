@@ -1,0 +1,10 @@
+entier max(entier entier1, entier entier2,entier entier3){
+	ecrire(1 + 2 < 3 * 4);
+	ecrire(1 + 2 > 3 * 4);
+	ecrire(1 + 2 <= 3 * 4);
+	ecrire(1 + 2 >= 3 * 4);
+	ecrire(1 + 2 == 3 * 4);
+	ecrire(1 + 2 != 3 * 4);
+}
+
+

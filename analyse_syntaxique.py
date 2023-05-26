@@ -143,6 +143,29 @@ class FloParser(Parser):
 	def boolean(self, p):
 		return arbre_abstrait.Comparaison('>=',p[0],p[2])
 	
+	@_('TYPE IDENTIFIANT "(" listeParametres ")" "{" listeInstructions "}"')
+	def instruction(self, p):
+		return arbre_abstrait.Fonction(p.IDENTIFIANT, p.listeParametres, p.listeInstructions)
+	
+	@_('parametre "," listeParametres')
+	def listeParametres(self, p):
+		p[2].parametres.insert(0, p[0])
+		return p[2]
+	
+	@_('parametre')
+	def listeParametres(self, p):
+		l = arbre_abstrait.ListeParametres()
+		l.parametres.append(p[0])
+		return l
+	
+	@_('TYPE IDENTIFIANT')
+	def parametre(self, p):
+		return arbre_abstrait.Parametre(p.IDENTIFIANT)
+	
+	
+	@_('IDENTIFIANT "=" expr ";"')
+	def instruction(self, p):
+		return arbre_abstrait.Affectation(p.IDENTIFIANT, p.expr)
 
 
 if __name__ == '__main__':
