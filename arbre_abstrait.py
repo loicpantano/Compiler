@@ -62,24 +62,32 @@ class DeclarationAffectation:
 		afficher("</declarationAffectation>",indent)
 
 class Si:
-	def __init__(self,exp,listeInstructions):
+	def __init__(self,exp,listeInstructions, branchage):
 		self.exp = exp
 		self.listeInstructions = listeInstructions
+		self.branchage = branchage
 	def afficher(self,indent=0):
 		afficher("<si>",indent)
-		self.exp.afficher(indent+1)
+		afficher("<condition>",indent+1)
+		self.exp.afficher(indent+2)
+		afficher("</condition>",indent+1)
 		self.listeInstructions.afficher(indent+1)
 		afficher("</si>",indent)
+		self.branchage.afficher(indent)
 
 class SinonSi:
-	def __init__(self,exp,listeInstructions):
+	def __init__(self,exp,listeInstructions,branchage):
 		self.exp = exp
 		self.listeInstructions = listeInstructions
+		self.branchage = branchage
 	def afficher(self,indent=0):
 		afficher("<sinonsi>",indent)
-		self.exp.afficher(indent+1)
+		afficher("<condition>",indent+1)
+		self.exp.afficher(indent+2)
+		afficher("</condition>",indent+1)
 		self.listeInstructions.afficher(indent+1)
 		afficher("</sinonsi>",indent)
+		self.branchage.afficher(indent)
 
 class Sinon:
 	def __init__(self,listeInstructions):

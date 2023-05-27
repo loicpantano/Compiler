@@ -16,12 +16,12 @@ class FloParser(Parser):
 	@_('instruction')
 	def listeInstructions(self, p):
 		l = arbre_abstrait.ListeInstructions()
-		l.instructions.append(p[0])
+		l.instructions.insert(0, p[0])
 		return l
 					
 	@_('instruction listeInstructions')
 	def listeInstructions(self, p):
-		p[1].instructions.append(p[0])
+		p[1].instructions.insert(0, p[0])
 		return p[1]
 		
 	@_('ecrire')
@@ -40,17 +40,22 @@ class FloParser(Parser):
 	def instruction(self, p):
 		return arbre_abstrait.DeclarationAffectation(p.TYPE, p.IDENTIFIANT, p.expr)
 	
+
 	@_('SI "(" expr ")" "{" listeInstructions "}" branchage')
 	def instruction(self, p):
-		return arbre_abstrait.Si(p.expr, p.listeInstructions)
+		return arbre_abstrait.Si(p.expr, p.listeInstructions, p.branchage)
 	
 	@_('SINONSI "(" expr ")" "{" listeInstructions "}" branchage')
 	def branchage(self, p):
-		return arbre_abstrait.SinonSi(p.expr, p.listeInstructions)
+		return arbre_abstrait.SinonSi(p.expr, p.listeInstructions, p.branchage)
 	
 	@_('SINON "{" listeInstructions "}"')
 	def branchage(self, p):
 		return arbre_abstrait.Sinon(p.listeInstructions)
+	
+	@_('')
+	def branchage(self, p):
+		return None
 
 			
 	@_('ECRIRE "(" expr ")" ";"')
