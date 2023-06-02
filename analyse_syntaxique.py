@@ -9,15 +9,17 @@ class FloParser(Parser):
 
 	# Règles gramaticales et actions associées
 
+	#Programme -----------------------------------------------------------------------
+
 	@_('listeFonctions listeInstructions')
 	def prog(self, p):
 		return arbre_abstrait.Programme(p[0], p[1])
 
-	@_('instruction')
-	def listeInstructions(self, p):
-		l = arbre_abstrait.ListeInstructions()
-		l.instructions.insert(0, p[0])
-		return l
+	#Liste Fonctions -----------------------------------------------------------------------	
+	@_('fonction listeFonctions')
+	def listeFonctions(self, p):
+		p[1].fonctions.insert(0, p[0])
+		return p[1]
 	
 	@_('fonction')
 	def listeFonctions(self, p):
@@ -25,24 +27,33 @@ class FloParser(Parser):
 		l.fonctions.insert(0, p[0])
 		return l
 	
-	@_('fonction listeFonctions')
-	def listeFonctions(self, p):
-		p[1].fonctions.insert(0, p[0])
-		return p[1]
-	
 	@_('')
 	def listeFonctions(self, p):
 		return arbre_abstrait.ListeFonctions()
+	
+	#Liste Instructions --------------------------------------------------------------------
 					
 	@_('instruction listeInstructions')
 	def listeInstructions(self, p):
 		p[1].instructions.insert(0, p[0])
 		return p[1]
+	
+	@_('instruction')
+	def listeInstructions(self, p):
+		l = arbre_abstrait.ListeInstructions()
+		l.instructions.insert(0, p[0])
+		return l
+	
+	#Instruction -----------------------------------------------------------------------
 		
 	@_('ecrire')
 	def instruction(self, p):
 		return p[0]
 	
+	@_('ECRIRE "(" expr ")" ";"')
+	def ecrire(self, p):
+		return arbre_abstrait.Ecrire(p.expr) #p.expr = p[2]
+
 	@_('TYPE IDENTIFIANT ";"')
 	def instruction(self, p):
 		return arbre_abstrait.Declaration(p.TYPE, p.IDENTIFIANT)
@@ -55,7 +66,11 @@ class FloParser(Parser):
 	def instruction(self, p):
 		return arbre_abstrait.DeclarationAffectation(p.TYPE, p.IDENTIFIANT, p.expr)
 	
+	@_('RETOURNER expr ";"')
+	def instruction(self, p):
+		return arbre_abstrait.Retourner(p.expr)
 
+	#If -----------------------------------------------------------------------
 	@_('SI "(" expr ")" "{" listeInstructions "}" branchage')
 	def instruction(self, p):
 		return arbre_abstrait.Si(p.expr, p.listeInstructions, p.branchage)
@@ -71,14 +86,14 @@ class FloParser(Parser):
 	@_('')
 	def branchage(self, p):
 		return None
+	
+	#While -----------------------------------------------------------------------
 
 	@_('TANTQUE "(" expr ")" "{" listeInstructions "}"')
 	def instruction(self, p):
 		return arbre_abstrait.TantQue(p.expr, p.listeInstructions)
-			
-	@_('ECRIRE "(" expr ")" ";"')
-	def ecrire(self, p):
-		return arbre_abstrait.Ecrire(p.expr) #p.expr = p[2]
+
+	#Expressions nonboolean -----------------------------------------------------------------------
 		
 	@_('nonboolean "+" produit')
 	def nonboolean(self, p):
@@ -136,6 +151,29 @@ class FloParser(Parser):
 	def facteur(self,p):
 		return arbre_abstrait.Identifiant(p.IDENTIFIANT)
 	
+    #Fonctions -----------------------------------------------------------------------
+
+	#Declaration -----------------------------------------------------------------------
+	@_('TYPE IDENTIFIANT "(" listeParametres ")" "{" listeInstructions "}"')
+	def fonction(self, p):
+		return arbre_abstrait.Fonction(p.IDENTIFIANT, p.listeParametres, p.listeInstructions)
+	
+	@_('parametre "," listeParametres')
+	def listeParametres(self, p):
+		p[2].parametres.insert(0, p[0])
+		return p[2]
+	
+	@_('parametre')
+	def listeParametres(self, p):
+		l = arbre_abstrait.ListeParametres()
+		l.parametres.append(p[0])
+		return l
+
+	@_('TYPE IDENTIFIANT')
+	def parametre(self, p):
+		return arbre_abstrait.Parametre(p.IDENTIFIANT)
+	
+	#Call not void -----------------------------------------------------------------------
 	@_('IDENTIFIANT "(" listeExpressions ")"')
 	def facteur(self, p):
 		return arbre_abstrait.AppelFonction(p.IDENTIFIANT, p.listeExpressions)
@@ -155,6 +193,17 @@ class FloParser(Parser):
 		l.expressions.append(p[0])
 		return l
 	
+	#Call void -----------------------------------------------------------------------
+	@_('IDENTIFIANT "(" listeExpressions ")" ";"')
+	def instruction(self, p):
+		return arbre_abstrait.AppelFonction(p.IDENTIFIANT, p.listeExpressions)
+	
+	@_('IDENTIFIANT "(" ")" ";"')
+	def instruction(self, p):
+		return arbre_abstrait.AppelFonction(p.IDENTIFIANT)
+	
+	#Expressions boolean -----------------------------------------------------------------------
+
 	@_('boolean')
 	def expr(self, p):
 		return p.boolean
@@ -218,40 +267,6 @@ class FloParser(Parser):
 	@_('nonboolean SUPERIEUR_OU_EGAL nonboolean')
 	def booleanfinal(self, p):
 		return arbre_abstrait.Comparaison('>=',p[0],p[2])
-	
-	@_('TYPE IDENTIFIANT "(" listeParametres ")" "{" listeInstructions "}"')
-	def fonction(self, p):
-		return arbre_abstrait.Fonction(p.IDENTIFIANT, p.listeParametres, p.listeInstructions)
-	
-	@_('parametre "," listeParametres')
-	def listeParametres(self, p):
-		p[2].parametres.insert(0, p[0])
-		return p[2]
-	
-	@_('parametre')
-	def listeParametres(self, p):
-		l = arbre_abstrait.ListeParametres()
-		l.parametres.append(p[0])
-		return l
-	
-	@_('TYPE IDENTIFIANT')
-	def parametre(self, p):
-		return arbre_abstrait.Parametre(p.IDENTIFIANT)
-	
-	@_('IDENTIFIANT "(" listeExpressions ")" ";"')
-	def instruction(self, p):
-		return arbre_abstrait.AppelFonction(p.IDENTIFIANT, p.listeExpressions)
-	
-	@_('IDENTIFIANT "(" ")" ";"')
-	def instruction(self, p):
-		return arbre_abstrait.AppelFonction(p.IDENTIFIANT)
-	
-
-	@_('RETOURNER expr ";"')
-	def instruction(self, p):
-		return arbre_abstrait.Retourner(p.expr)
-	
-
 
 if __name__ == '__main__':
 	lexer = FloLexer()
