@@ -1,6 +1,1 @@
-
-si ( 1 < 2) {
-    entier a;
-}sinon{
-    entier b;
-}
+ecrire(42);

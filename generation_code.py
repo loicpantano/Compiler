@@ -65,6 +65,7 @@ def gen_programme(programme):
 	printifm('_start:')
 	gen_listeInstructions(programme.listeInstructions)
 	nasm_instruction("mov", "eax", "1", "", "1 est le code de SYS_EXIT") 
+	nasm_instruction("mov", "ebx", "0", "", "") 
 	nasm_instruction("int", "0x80", "", "", "exit") 
 	
 """
@@ -82,7 +83,7 @@ def gen_instruction(instruction):
 		gen_ecrire(instruction)
 	else:
 		print("type instruction inconnu",type(instruction))
-		exit(0)
+		exit(1)
 
 """
 Affiche le code nasm correspondant au fait d'envoyer la valeur entière d'une expression sur la sortie standard
@@ -102,7 +103,7 @@ def gen_expression(expression):
 			nasm_instruction("push", str(expression.valeur), "", "", "") ; #on met sur la pile la valeur entière			
 	else:
 		print("type d'expression inconnu",type(expression))
-		exit(0)
+		exit(1)
 
 
 """
@@ -142,7 +143,7 @@ if __name__ == "__main__":
 	parser = FloParser()
 	if len(sys.argv) < 3 or sys.argv[1] not in ["-nasm","-table"]:
 		print("usage: python3 generation_code.py -nasm|-table NOM_FICHIER_SOURCE.flo")
-		exit(0)
+		exit(1)
 	if sys.argv[1]  == "-nasm":
 		afficher_nasm = True
 	else:
