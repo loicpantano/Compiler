@@ -29,6 +29,10 @@ class FloParser(Parser):
 	def listeFonctions(self, p):
 		p[1].fonctions.insert(0, p[0])
 		return p[1]
+	
+	@_('')
+	def listeFonctions(self, p):
+		return arbre_abstrait.ListeFonctions()
 					
 	@_('instruction listeInstructions')
 	def listeInstructions(self, p):
