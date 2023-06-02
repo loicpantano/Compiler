@@ -97,6 +97,26 @@ class Sinon:
 		self.listeInstructions.afficher(indent+1)
 		afficher("</sinon>",indent)
 
+class TantQue:
+	def __init__(self,exp,listeInstructions):
+		self.exp = exp
+		self.listeInstructions = listeInstructions
+	def afficher(self,indent=0):
+		afficher("<tantque>",indent)
+		afficher("<condition>",indent+1)
+		self.exp.afficher(indent+2)
+		afficher("</condition>",indent+1)
+		self.listeInstructions.afficher(indent+1)
+		afficher("</tantque>",indent)
+
+
+class Retourner:
+	def __init__(self,exp):
+		self.exp = exp
+	def afficher(self,indent=0):
+		afficher("<retourner>",indent)
+		self.exp.afficher(indent+1)
+		afficher("</retourner>",indent)
 
 class Operation:
 	def __init__(self,op,exp1,exp2):

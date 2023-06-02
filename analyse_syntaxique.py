@@ -57,6 +57,9 @@ class FloParser(Parser):
 	def branchage(self, p):
 		return None
 
+	@_('TANTQUE "(" expr ")" "{" listeInstructions "}"')
+	def instruction(self, p):
+		return arbre_abstrait.TantQue(p.expr, p.listeInstructions)
 			
 	@_('ECRIRE "(" expr ")" ";"')
 	def ecrire(self, p):
@@ -219,6 +222,19 @@ class FloParser(Parser):
 	@_('TYPE IDENTIFIANT')
 	def parametre(self, p):
 		return arbre_abstrait.Parametre(p.IDENTIFIANT)
+	
+	@_('IDENTIFIANT "(" listeExpressions ")" ";"')
+	def instruction(self, p):
+		return arbre_abstrait.AppelFonction(p.IDENTIFIANT, p.listeExpressions)
+	
+	@_('IDENTIFIANT "(" ")" ";"')
+	def instruction(self, p):
+		return arbre_abstrait.AppelFonction(p.IDENTIFIANT)
+	
+
+	@_('RETOURNER expr ";"')
+	def instruction(self, p):
+		return arbre_abstrait.Retourner(p.expr)
 	
 
 

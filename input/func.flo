@@ -9,6 +9,15 @@ entier max(entier entier1, entier entier2,entier entier3){
 	} sinon {
 		res = entier2;
 	}
+
+	tantque (res > 0){
+		res = res - 1;
+	}
+
+	max();
+	max(1,2,3);
+
+	retourner res;
 }
 
 
