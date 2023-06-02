@@ -81,8 +81,6 @@ Affiche le code nasm correspondant à une instruction
 def gen_instruction(instruction):
 	if type(instruction) == arbre_abstrait.Ecrire:
 		gen_ecrire(instruction)
-	elif type(instruction) == arbre_abstrait.Lire:
-		gen_lire(instruction)
 	else:
 		print("type instruction inconnu",type(instruction))
 		exit(1)
@@ -90,14 +88,6 @@ def gen_instruction(instruction):
 """
 Affiche le code nasm correspondant au fait d'envoyer la valeur entière d'une expression sur la sortie standard
 """	
-def gen_lire(lire):
-	gen_expression(lire.exp)
-	nasm_instruction("mov", "eax" , "sinput")
-	nasm_instruction("call", "readline")
-	nasm_instruction("call", "atoi")
-	nasm_instruction("push", "eax")
-
-
 def gen_ecrire(ecrire):
 	gen_expression(ecrire.exp) #on calcule et empile la valeur d'expression
 	nasm_instruction("pop", "eax", "", "", "") #on dépile la valeur d'expression sur eax
@@ -111,6 +101,8 @@ def gen_expression(expression):
 		gen_operation(expression) #on calcule et empile la valeur de l'opération
 	elif type(expression) == arbre_abstrait.Entier:
 			nasm_instruction("push", str(expression.valeur), "", "", "") ; #on met sur la pile la valeur entière			
+	elif type(expression) == arbre_abstrait.Lire:
+		gen_lire()
 	else:
 		print("type d'expression inconnu",type(expression))
 		exit(1)
@@ -119,6 +111,13 @@ def gen_expression(expression):
 """
 Affiche le code nasm pour calculer l'opération et la mettre en haut de la pile
 """
+def gen_lire():
+	nasm_instruction("mov", "eax" , "sinput")
+	nasm_instruction("call", "readline")
+	nasm_instruction("call", "atoi")
+	nasm_instruction("push", "eax")
+
+
 def gen_operation(operation):
 	op = operation.op
 		
