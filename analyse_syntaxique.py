@@ -9,15 +9,26 @@ class FloParser(Parser):
 
 	# Règles gramaticales et actions associées
 
-	@_('listeInstructions')
+	@_('listeFonctions listeInstructions')
 	def prog(self, p):
-		return arbre_abstrait.Programme(p[0])
+		return arbre_abstrait.Programme(p[0], p[1])
 
 	@_('instruction')
 	def listeInstructions(self, p):
 		l = arbre_abstrait.ListeInstructions()
 		l.instructions.insert(0, p[0])
 		return l
+	
+	@_('fonction')
+	def listeFonctions(self, p):
+		l = arbre_abstrait.ListeFonctions()
+		l.fonctions.insert(0, p[0])
+		return l
+	
+	@_('fonction listeFonctions')
+	def listeFonctions(self, p):
+		p[1].fonctions.insert(0, p[0])
+		return p[1]
 					
 	@_('instruction listeInstructions')
 	def listeInstructions(self, p):
@@ -205,7 +216,7 @@ class FloParser(Parser):
 		return arbre_abstrait.Comparaison('>=',p[0],p[2])
 	
 	@_('TYPE IDENTIFIANT "(" listeParametres ")" "{" listeInstructions "}"')
-	def instruction(self, p):
+	def fonction(self, p):
 		return arbre_abstrait.Fonction(p.IDENTIFIANT, p.listeParametres, p.listeInstructions)
 	
 	@_('parametre "," listeParametres')

@@ -5,10 +5,12 @@ def afficher(s,indent=0):
 	print(" "*indent+s)
 	
 class Programme:
-	def __init__(self,listeInstructions):
+	def __init__(self,listeFonctions, listeInstructions):
+		self.listeFonctions = listeFonctions
 		self.listeInstructions = listeInstructions
 	def afficher(self,indent=0):
 		afficher("<programme>",indent)
+		self.listeFonctions.afficher(indent+1)
 		self.listeInstructions.afficher(indent+1)
 		afficher("</programme>",indent)
 
@@ -20,7 +22,16 @@ class ListeInstructions:
 		for instruction in self.instructions:
 			instruction.afficher(indent+1)
 		afficher("</listeInstructions>",indent)
-			
+
+class ListeFonctions:
+	def __init__(self):
+		self.fonctions = []
+	def afficher(self,indent=0):
+		afficher("<listeFonctions>",indent)
+		for instruction in self.fonctions:
+			instruction.afficher(indent+1)
+		afficher("</listeFonctions>",indent)
+
 class Ecrire:
 	def __init__(self,exp):
 		self.exp = exp

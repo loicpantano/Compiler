@@ -20,4 +20,6 @@ entier max(entier entier1, entier entier2,entier entier3){
 	retourner res;
 }
 
+ecrire((10 + 5) * 3 - ((2 * 10) / 4) + 7 - 8 % 2);
+
 
