@@ -1,0 +1,6 @@
+entier a;
+booleen b;
+a = 1;
+b = faux;
+entier c = 2;
+booleen d = vrai;
