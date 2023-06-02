@@ -10,8 +10,10 @@ class Programme:
 		self.listeInstructions = listeInstructions
 	def afficher(self,indent=0):
 		afficher("<programme>",indent)
-		self.listeFonctions.afficher(indent+1)
-		self.listeInstructions.afficher(indent+1)
+		if self.listeFonctions != None:
+			self.listeFonctions.afficher(indent+1)
+		if self.listeInstructions != None:
+			self.listeInstructions.afficher(indent+1)
 		afficher("</programme>",indent)
 
 class ListeInstructions:
@@ -209,7 +211,8 @@ class ListeExpressions:
 		afficher("</ListeExpressions>", indent)
 
 class Fonction:
-	def __init__(self, nom, listeParametres, listeInstructions):
+	def __init__(self, type, nom, listeParametres, listeInstructions):
+		self.type = type
 		self.nom = nom
 		self.listeParametres = listeParametres
 		self.listeInstructions = listeInstructions
@@ -217,6 +220,7 @@ class Fonction:
 	def afficher(self, indent=0):
 		afficher("<Fonction>", indent)
 		afficher("<" +self.nom + ">", indent+1)
+		afficher("[" +self.type + "]", indent+2)
 		self.listeParametres.afficher(indent+2)
 		self.listeInstructions.afficher(indent+2)
 		afficher("</" +self.nom + ">", indent+1)
@@ -242,5 +246,9 @@ class Parametre:
 		afficher("</" +self.nom + ">", indent+1)
 		afficher("</Parametre>", indent)
 
-
+class Empty:
+	def __init__(self):
+		pass
+	def afficher(self,indent=0):
+		pass
 

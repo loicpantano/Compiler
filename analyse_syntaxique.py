@@ -14,22 +14,32 @@ class FloParser(Parser):
 	@_('listeFonctions listeInstructions')
 	def prog(self, p):
 		return arbre_abstrait.Programme(p[0], p[1])
-
-	#Liste Fonctions -----------------------------------------------------------------------	
-	@_('fonction listeFonctions')
-	def listeFonctions(self, p):
-		p[1].fonctions.insert(0, p[0])
-		return p[1]
+	
+	@_('listeInstructions')
+	def prog(self, p):
+		return arbre_abstrait.Programme(None, p[0])
+	
 	
 	@_('fonction')
 	def listeFonctions(self, p):
 		l = arbre_abstrait.ListeFonctions()
-		l.fonctions.insert(0, p[0])
+		l.fonctions.insert(0,p[0])
 		return l
+
 	
-	@_('')
+	@_('listeFonctions fonction')
 	def listeFonctions(self, p):
-		return arbre_abstrait.ListeFonctions()
+		p[0].fonctions.append(p[1])
+		return p[0]
+
+	
+	@_('TYPE IDENTIFIANT "(" listeParametres ")" "{" listeInstructions "}"')
+	def fonction(self, p):
+		return arbre_abstrait.Fonction(p.TYPE, p.IDENTIFIANT, p.listeParametres, p.listeInstructions)
+	
+	@_('TYPE IDENTIFIANT "(" ")" "{" listeInstructions "}"')
+	def fonction(self, p):
+		return arbre_abstrait.Fonction(p.TYPE, p.IDENTIFIANT, arbre_abstrait.ListeParametres(), p.listeInstructions)
 	
 	#Liste Instructions --------------------------------------------------------------------
 					
@@ -85,7 +95,7 @@ class FloParser(Parser):
 	
 	@_('')
 	def branchage(self, p):
-		return None
+		return arbre_abstrait.Empty()
 	
 	#While -----------------------------------------------------------------------
 
@@ -153,10 +163,7 @@ class FloParser(Parser):
 	
     #Fonctions -----------------------------------------------------------------------
 
-	#Declaration -----------------------------------------------------------------------
-	@_('TYPE IDENTIFIANT "(" listeParametres ")" "{" listeInstructions "}"')
-	def fonction(self, p):
-		return arbre_abstrait.Fonction(p.IDENTIFIANT, p.listeParametres, p.listeInstructions)
+
 	
 	@_('parametre "," listeParametres')
 	def listeParametres(self, p):
