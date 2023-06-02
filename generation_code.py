@@ -81,6 +81,8 @@ Affiche le code nasm correspondant à une instruction
 def gen_instruction(instruction):
 	if type(instruction) == arbre_abstrait.Ecrire:
 		gen_ecrire(instruction)
+	elif type(instruction) == arbre_abstrait.Lire:
+		gen_lire(instruction)
 	else:
 		print("type instruction inconnu",type(instruction))
 		exit(1)
@@ -88,6 +90,14 @@ def gen_instruction(instruction):
 """
 Affiche le code nasm correspondant au fait d'envoyer la valeur entière d'une expression sur la sortie standard
 """	
+def gen_lire(lire):
+	gen_expression(lire.exp)
+	nasm_instruction("mov", "eax" , "sinput")
+	nasm_instruction("call", "readline")
+	nasm_instruction("call", "atoi")
+	nasm_instruction("push", "eax")
+
+
 def gen_ecrire(ecrire):
 	gen_expression(ecrire.exp) #on calcule et empile la valeur d'expression
 	nasm_instruction("pop", "eax", "", "", "") #on dépile la valeur d'expression sur eax
