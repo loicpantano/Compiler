@@ -236,7 +236,7 @@ def gen_operation(operation):
 	nasm_instruction("pop", "ebx", "", "", "dépile la seconde operande dans ebx")
 	nasm_instruction("pop", "eax", "", "", "dépile la permière operande dans eax")
 	
-	code = {"+":"add","*":"imul","-":"sub","/":"div","%":"div","OU":"or","ET":"and"} #Un dictionnaire qui associe à chaque opérateur sa fonction nasm
+	code = {"+":"add","*":"imul","-":"sub","/":"idiv","%":"idiv","OU":"or","ET":"and"} #Un dictionnaire qui associe à chaque opérateur sa fonction nasm
 	#Voir: https://www.bencode.net/blob/nasmcheatsheet.pdf
 	if op in ['+']:
 		nasm_instruction(code[op], "eax", "ebx", "", "effectue l'opération eax" +op+"ebx et met le résultat dans eax" )
