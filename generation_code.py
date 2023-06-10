@@ -5,6 +5,11 @@ import arbre_abstrait
 
 num_etiquette_courante = -1 #Permet de donner des noms différents à toutes les étiquettes (en les appelant e0, e1,e2,...)
 
+def nom_nouvelle_etiquette() :
+	global num_etiquette_courante
+	num_etiquette_courante +=1
+	return "e"+ str(num_etiquette_courante)
+
 afficher_table = False
 afficher_nasm = False
 """
@@ -108,7 +113,8 @@ def gen_expression(expression):
 			nasm_instruction("push", "0", "", "", "")
 	elif type(expression) == arbre_abstrait.Negation:
 		gen_negation(expression)
-
+	elif type(expression) == arbre_abstrait.Comparaison:
+		gen_comparaison(expression)
 	elif type(expression) == arbre_abstrait.Lire:
 		gen_lire()
 	else:
@@ -125,6 +131,68 @@ def gen_lire():
 	nasm_instruction("call", "atoi")
 	nasm_instruction("push", "eax")
 
+def gen_comparaison(comparaison):
+    op = comparaison.op
+
+    gen_expression(comparaison.exp1) # on calcule et empile la valeur de exp1
+    gen_expression(comparaison.exp2) # on calcule et empile la valeur de exp2
+
+    nasm_instruction("pop", "ebx", "", "", "dépile la seconde opérande dans ebx")
+    nasm_instruction("pop", "eax", "", "", "dépile la première opérande dans eax")
+
+    nasm_instruction("cmp", "eax", "ebx", "", "compare les deux opérandes")
+
+    if op in ['==']:
+        e_label = nom_nouvelle_etiquette()
+        end_label = nom_nouvelle_etiquette()
+        nasm_instruction("je", e_label, "", "", "sauter à l'étiquette si les valeurs sont égales")
+        nasm_instruction("push", "0", "", "", "empile 0 (false) si les valeurs sont différentes")
+        nasm_instruction("jmp", end_label, "", "", "sauter à la fin de la comparaison")
+        nasm_instruction(e_label+":", "", "", "étiquette si les valeurs sont égales")
+        nasm_instruction("push", "1", "", "", "empile 1 (true) si les valeurs sont égales")
+        nasm_instruction(end_label+":", "", "", "étiquette de fin de la comparaison")
+
+    elif op in ['<', '>', '<=', '>=']:
+        l_label = nom_nouvelle_etiquette()
+        g_label = nom_nouvelle_etiquette()
+        le_label = nom_nouvelle_etiquette()
+        ge_label = nom_nouvelle_etiquette()
+        end_label = nom_nouvelle_etiquette()
+
+        # sauts conditionnels
+        if op == '<':
+            nasm_instruction("jl", l_label, "", "", "sauter à l'étiquette si 'eax' < 'ebx'")
+        elif op == '>':
+            nasm_instruction("jg", g_label, "", "", "sauter à l'étiquette si 'eax' > 'ebx'")
+        elif op == '<=':
+            nasm_instruction("jle", le_label, "", "", "sauter à l'étiquette si 'eax' <= 'ebx'")
+        elif op == '>=':
+            nasm_instruction("jge", ge_label, "", "", "sauter à l'étiquette si 'eax' >= 'ebx'")
+
+        nasm_instruction("push", "0", "", "", "empile 0 (false)")
+        nasm_instruction("jmp", end_label, "", "", "sauter à la fin de la comparaison")
+
+        if op == '<':
+            nasm_instruction(l_label+":", "", "", "étiquette si 'eax' >= 'ebx'")
+        elif op == '>':
+            nasm_instruction(g_label+":", "", "", "étiquette si 'eax' <= 'ebx'")
+        elif op == '<=':
+            nasm_instruction(le_label+":", "", "", "étiquette si 'eax' > 'ebx'")
+        elif op == '>=':
+            nasm_instruction(ge_label+":", "", "", "étiquette si 'eax' < 'ebx'")
+        nasm_instruction("push", "1", "", "", "empile 1 (true)")
+
+        nasm_instruction(end_label+":", "", "", "étiquette de fin de la comparaison")
+
+    elif op in ['!=']:
+        e_label = nom_nouvelle_etiquette()
+        end_label = nom_nouvelle_etiquette()
+        nasm_instruction("jne", e_label, "", "", "sauter à l'étiquette si les valeurs sont différentes")
+        nasm_instruction("push", "0", "", "", "empile 0 (false) si les valeurs sont égales")
+        nasm_instruction("jmp", end_label, "", "", "sauter à la fin de la comparaison")
+        nasm_instruction( e_label+":", "", "", "étiquette si les valeurs sont différentes")
+        nasm_instruction("push", "1", "", "", "empile 1 (true) si les valeurs sont différentes")
+        nasm_instruction(end_label+":", "", "", "étiquette de fin de la comparaison")
 
 def gen_operation(operation):
 	op = operation.op

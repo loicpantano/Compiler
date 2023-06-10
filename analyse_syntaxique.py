@@ -227,6 +227,14 @@ class FloParser(Parser):
 	def booleanfinal(self, p):
 		return arbre_abstrait.Boolean(False)
 	
+	@_('"(" boolean ")"')
+	def facteurbool(self, p):
+		return p.boolean
+	
+	@_('NON "(" boolean ")"')
+	def facteurbool(self, p):
+		return arbre_abstrait.Negation(p.boolean)
+	
 	@_('NON booleanfinal')
 	def facteurbool(self, p):
 		return arbre_abstrait.Negation(p.booleanfinal)
