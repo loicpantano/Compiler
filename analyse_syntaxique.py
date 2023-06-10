@@ -158,7 +158,7 @@ class FloParser(Parser):
 		return arbre_abstrait.Lire()
 	
 	@_('IDENTIFIANT')
-	def facteur(self,p):
+	def unsignedfacteur(self,p):
 		return arbre_abstrait.Identifiant(p.IDENTIFIANT)
 	
     #Fonctions -----------------------------------------------------------------------
