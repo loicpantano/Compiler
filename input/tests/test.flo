@@ -1,1 +1,5 @@
-ecrire(9 / 3);
+ecrire(vrai);
+ecrire(faux);
+ecrire(non vrai);
+ecrire(non faux);
+ecrire(vrai et faux);

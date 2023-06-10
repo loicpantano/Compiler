@@ -100,7 +100,15 @@ def gen_expression(expression):
 	if type(expression) == arbre_abstrait.Operation:
 		gen_operation(expression) #on calcule et empile la valeur de l'opération
 	elif type(expression) == arbre_abstrait.Entier:
-			nasm_instruction("push", str(expression.valeur), "", "", "") ; #on met sur la pile la valeur entière			
+		nasm_instruction("push", str(expression.valeur), "", "", "") #on met sur la pile la valeur entière			
+	elif type(expression) == arbre_abstrait.Boolean:
+		if expression.valeur:
+			nasm_instruction("push", "1", "", "", "")
+		else:
+			nasm_instruction("push", "0", "", "", "")
+	elif type(expression) == arbre_abstrait.Negation:
+		gen_negation(expression)
+
 	elif type(expression) == arbre_abstrait.Lire:
 		gen_lire()
 	else:
@@ -127,7 +135,7 @@ def gen_operation(operation):
 	nasm_instruction("pop", "ebx", "", "", "dépile la seconde operande dans ebx")
 	nasm_instruction("pop", "eax", "", "", "dépile la permière operande dans eax")
 	
-	code = {"+":"add","*":"imul","-":"sub","/":"div","%":"div"} #Un dictionnaire qui associe à chaque opérateur sa fonction nasm
+	code = {"+":"add","*":"imul","-":"sub","/":"div","%":"div","OU":"or","ET":"and"} #Un dictionnaire qui associe à chaque opérateur sa fonction nasm
 	#Voir: https://www.bencode.net/blob/nasmcheatsheet.pdf
 	if op in ['+']:
 		nasm_instruction(code[op], "eax", "ebx", "", "effectue l'opération eax" +op+"ebx et met le résultat dans eax" )
@@ -142,9 +150,18 @@ def gen_operation(operation):
 		nasm_instruction("mov", "edx", "0", "", "met 0 dans edx pour éviter un problème de division")
 		nasm_instruction(code[op], "ebx", "", "", "effectue l'opération eax" +op+"ebx et met le résultat dans eax" )
 		nasm_instruction("mov", "eax", "edx", "", "met le reste de la division dans eax")
+	if op == 'OU':
+		nasm_instruction(code[op], "eax", "ebx", "", "effectue l'opération eax" +op+"ebx et met le résultat dans eax" )
+	if op == 'ET':
+		nasm_instruction(code[op], "eax", "ebx", "", "effectue l'opération eax" +op+"ebx et met le résultat dans eax" )
 
 	nasm_instruction("push",  "eax" , "", "", "empile le résultat");	
 
+def gen_negation(negation):
+	gen_expression(negation.valeur)
+	nasm_instruction("pop", "eax")
+	nasm_instruction("xor", "eax", "1")
+	nasm_instruction("push", "eax")
 
 if __name__ == "__main__":
 	afficher_nasm = True
