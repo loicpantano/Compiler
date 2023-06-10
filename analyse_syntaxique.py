@@ -86,9 +86,9 @@ class FloParser(Parser):
 	def instruction(self, p):
 		return p[0]
 
-	@_('SI "(" expr ")" "{" listeInstructions "}" branchage')
+	@_('SI "(" boolean ")" "{" listeInstructions "}" branchage')
 	def branche(self, p):
-		return arbre_abstrait.Si(p.expr, p.listeInstructions, p.branchage)
+		return arbre_abstrait.Si(p.boolean, p.listeInstructions, p.branchage)
 	
 	@_('SINON branche')
 	def branchage(self, p):
@@ -104,9 +104,9 @@ class FloParser(Parser):
 	
 	#While -----------------------------------------------------------------------
 
-	@_('TANTQUE "(" expr ")" "{" listeInstructions "}"')
+	@_('TANTQUE "(" boolean ")" "{" listeInstructions "}"')
 	def instruction(self, p):
-		return arbre_abstrait.TantQue(p.expr, p.listeInstructions)
+		return arbre_abstrait.TantQue(p.boolean, p.listeInstructions)
 
 	#Expressions nonboolean -----------------------------------------------------------------------
 		
