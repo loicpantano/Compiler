@@ -81,13 +81,18 @@ class FloParser(Parser):
 		return arbre_abstrait.Retourner(p.expr)
 
 	#If -----------------------------------------------------------------------
-	@_('SI "(" expr ")" "{" listeInstructions "}" branchage')
+
+	@_('branche')
 	def instruction(self, p):
+		return p[0]
+
+	@_('SI "(" expr ")" "{" listeInstructions "}" branchage')
+	def branche(self, p):
 		return arbre_abstrait.Si(p.expr, p.listeInstructions, p.branchage)
 	
-	@_('SINONSI "(" expr ")" "{" listeInstructions "}" branchage')
+	@_('SINON branche')
 	def branchage(self, p):
-		return arbre_abstrait.SinonSi(p.expr, p.listeInstructions, p.branchage)
+		return arbre_abstrait.SinonSi(p.branche)
 	
 	@_('SINON "{" listeInstructions "}"')
 	def branchage(self, p):

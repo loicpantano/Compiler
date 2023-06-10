@@ -89,10 +89,10 @@ class Si:
 		self.branchage.afficher(indent)
 
 class SinonSi:
-	def __init__(self,exp,listeInstructions,branchage):
-		self.exp = exp
-		self.listeInstructions = listeInstructions
-		self.branchage = branchage
+	def __init__(self,branche):
+		self.exp = branche.exp
+		self.listeInstructions = branche.listeInstructions
+		self.branchage = branche.branchage
 	def afficher(self,indent=0):
 		afficher("<sinonsi>",indent)
 		afficher("<condition>",indent+1)

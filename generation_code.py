@@ -51,13 +51,6 @@ def nasm_instruction(opcode, op1="", op2="", op3="", comment=""):
 
 
 """
-Retourne le nom d'une nouvelle étiquette
-"""
-def nasm_nouvelle_etiquette():
-	num_etiquette_courante+=1
-	return "e"+str(num_etiquette_courante)
-
-"""
 Affiche le code nasm correspondant à tout un programme
 """
 def gen_programme(programme):
@@ -86,6 +79,16 @@ Affiche le code nasm correspondant à une instruction
 def gen_instruction(instruction):
 	if type(instruction) == arbre_abstrait.Ecrire:
 		gen_ecrire(instruction)
+	elif type(instruction) == arbre_abstrait.Si:
+		gen_si(instruction)
+	elif type(instruction) == arbre_abstrait.SinonSi:
+		gen_si(instruction)
+	elif type(instruction) == arbre_abstrait.Sinon:
+		gen_sinon(instruction);
+	elif type(instruction) == arbre_abstrait.TantQue:
+		gen_tantQue(instruction)
+	elif type(instruction) == arbre_abstrait.Empty:
+		pass
 	else:
 		print("type instruction inconnu",type(instruction))
 		exit(1)
@@ -97,6 +100,36 @@ def gen_ecrire(ecrire):
 	gen_expression(ecrire.exp) #on calcule et empile la valeur d'expression
 	nasm_instruction("pop", "eax", "", "", "") #on dépile la valeur d'expression sur eax
 	nasm_instruction("call", "iprintLF", "", "", "") #on envoie la valeur d'eax sur la sortie standard
+
+
+def gen_tantQue(instruction):
+	etiquette_debut = nom_nouvelle_etiquette()
+	etiquette_fin = nom_nouvelle_etiquette()
+	nasm_instruction(etiquette_debut+":", "", "", "")
+	gen_expression(instruction.exp)
+	nasm_instruction("pop", "eax", "", "", "")
+	nasm_instruction("cmp", "eax", "0", "", "")
+	nasm_instruction("je", etiquette_fin, "", "", "")
+	gen_listeInstructions(instruction.listeInstructions)
+	nasm_instruction("jmp", etiquette_debut, "", "", "")
+	nasm_instruction(etiquette_fin+":", "", "", "")
+
+def gen_si(instruction):
+	gen_expression(instruction.exp)
+	nasm_instruction("pop", "eax", "", "", "")
+	nasm_instruction("cmp", "eax", "0", "", "")
+	etiquette_fin = nom_nouvelle_etiquette()
+	nasm_instruction("je", etiquette_fin, "", "", "")
+	gen_listeInstructions(instruction.listeInstructions)
+	etiquette_vrai = nom_nouvelle_etiquette()
+	nasm_instruction("jmp", etiquette_vrai, "", "", "")
+	nasm_instruction(etiquette_fin+":", "", "", "")
+	gen_instruction(instruction.branchage)
+	nasm_instruction(etiquette_vrai+":", "", "", "")
+
+def gen_sinon(instruction):
+	gen_listeInstructions(instruction.listeInstructions)
+
 
 """
 Affiche le code nasm pour calculer et empiler la valeur d'une expression
