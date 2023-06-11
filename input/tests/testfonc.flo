@@ -1,0 +1,11 @@
+entier f(){
+    retourner 2;
+}
+entier g(){
+    retourner 4;
+}
+boolean h(){
+    retourner Vrai;
+}
+ecrire(f()+g());
+ecrire(Non h());
