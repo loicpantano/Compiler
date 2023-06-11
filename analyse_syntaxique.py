@@ -60,25 +60,41 @@ class FloParser(Parser):
 	def instruction(self, p):
 		return p[0]
 	
-	@_('ECRIRE "(" expr ")" ";"')
+	@_('ECRIRE "(" boolean ")" ";"')
 	def ecrire(self, p):
-		return arbre_abstrait.Ecrire(p.expr) #p.expr = p[2]
+		return arbre_abstrait.Ecrire(p.boolean) #p.expr = p[2]
+	
+	@_('ECRIRE "(" nonboolean ")" ";"')
+	def ecrire(self, p):
+		return arbre_abstrait.Ecrire(p.nonboolean) #p.expr = p[2]
 
 	@_('TYPE IDENTIFIANT ";"')
 	def instruction(self, p):
 		return arbre_abstrait.Declaration(p.TYPE, p.IDENTIFIANT)
 	
-	@_('IDENTIFIANT "=" expr ";"')
+	@_('IDENTIFIANT "=" boolean ";"')
 	def instruction(self, p):
-		return arbre_abstrait.Affectation(p.IDENTIFIANT, p.expr)
+		return arbre_abstrait.Affectation(p.IDENTIFIANT, p.boolean)
 	
-	@_('TYPE IDENTIFIANT "=" expr ";"')
+	@_('IDENTIFIANT "=" nonboolean ";"')
 	def instruction(self, p):
-		return arbre_abstrait.DeclarationAffectation(p.TYPE, p.IDENTIFIANT, p.expr)
+		return arbre_abstrait.Affectation(p.IDENTIFIANT, p.nonboolean)
 	
-	@_('RETOURNER expr ";"')
+	@_('TYPE IDENTIFIANT "=" boolean ";"')
 	def instruction(self, p):
-		return arbre_abstrait.Retourner(p.expr)
+		return arbre_abstrait.DeclarationAffectation(p.TYPE, p.IDENTIFIANT, p.boolean)
+	
+	@_('TYPE IDENTIFIANT "=" nonboolean ";"')
+	def instruction(self, p):
+		return arbre_abstrait.DeclarationAffectation(p.TYPE, p.IDENTIFIANT, p.nonboolean)
+	
+	@_('RETOURNER boolean ";"')
+	def instruction(self, p):
+		return arbre_abstrait.Retourner(p.boolean)
+	
+	@_('RETOURNER nonboolean ";"')
+	def instruction(self, p):
+		return arbre_abstrait.Retourner(p.nonboolean)
 
 	#If -----------------------------------------------------------------------
 
@@ -194,17 +210,33 @@ class FloParser(Parser):
 	def facteur(self, p):
 		return arbre_abstrait.AppelFonction(p.IDENTIFIANT)
 
-	@_('expr "," listeExpressions')
+	@_('temp "," listeExpressions')
 	def listeExpressions(self, p):
 		p[2].expressions.insert(0, p[0])
 		return p[2]
 
-	@_('expr')
+	
+	@_('temp')
 	def listeExpressions(self, p):
 		l = arbre_abstrait.ListeExpressions()
 		l.expressions.append(p[0])
 		return l
 	
+	@_('tempX')
+	def temp(self, p):
+		return p.tempX
+
+	@_('nonboolean')
+	def tempX(self, p):
+		return p.nonboolean
+	
+	@_('boolean')
+	def temp(self, p):
+		return p.boolean
+	
+
+
+
 	#Call void -----------------------------------------------------------------------
 	@_('IDENTIFIANT "(" listeExpressions ")" ";"')
 	def instruction(self, p):
@@ -215,14 +247,6 @@ class FloParser(Parser):
 		return arbre_abstrait.AppelFonction(p.IDENTIFIANT)
 	
 	#Expressions boolean -----------------------------------------------------------------------
-
-	@_('boolean')
-	def expr(self, p):
-		return p.boolean
-	
-	@_('nonboolean')
-	def expr(self, p):
-		return p.nonboolean
 	
 	@_('VRAI')
 	def booleanfinal(self, p):
@@ -231,6 +255,10 @@ class FloParser(Parser):
 	@_('FAUX')
 	def booleanfinal(self, p):
 		return arbre_abstrait.Boolean(False)
+	
+	@_('IDENTIFIANT')
+	def booleanfinal(self,p):
+		return arbre_abstrait.Identifiant(p.IDENTIFIANT)
 	
 	@_('"(" boolean ")"')
 	def facteurbool(self, p):
