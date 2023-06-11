@@ -2,6 +2,7 @@ import sys
 from analyse_lexicale import FloLexer
 from analyse_syntaxique import FloParser
 import arbre_abstrait
+import table_symboles
 
 num_etiquette_courante = -1 #Permet de donner des noms différents à toutes les étiquettes (en les appelant e0, e1,e2,...)
 
@@ -12,6 +13,7 @@ def nom_nouvelle_etiquette() :
 
 afficher_table = False
 afficher_nasm = False
+table = table_symboles.SymbolTable()
 """
 Un print qui ne fonctionne que si la variable afficher_table vaut Vrai.
 (permet de choisir si on affiche le code assembleur ou la table des symboles)
@@ -60,11 +62,24 @@ def gen_programme(programme):
 	printifm('v$a:	resd	1')
 	printifm('section\t.text')
 	printifm('global _start')
+	gen_listeFonctions(programme.listeFonctions)
 	printifm('_start:')
 	gen_listeInstructions(programme.listeInstructions)
 	nasm_instruction("mov", "eax", "1", "", "1 est le code de SYS_EXIT") 
 	nasm_instruction("mov", "ebx", "0", "", "") 
 	nasm_instruction("int", "0x80", "", "", "exit") 
+
+
+def gen_listeFonctions(listeFonctions):
+	for fonction in listeFonctions.fonctions:
+		table.add_symbol(fonction.nom, fonction.type)
+	for fonction in listeFonctions.fonctions:
+		gen_fonction(fonction)
+
+def gen_fonction(fonction):
+	nasm_instruction("_"+fonction.nom+":", "", "", "", "")
+	gen_listeInstructions(fonction.listeInstructions)
+	
 	
 """
 Affiche le code nasm correspondant à une suite d'instructions
@@ -89,6 +104,8 @@ def gen_instruction(instruction):
 		gen_tantQue(instruction)
 	elif type(instruction) == arbre_abstrait.Empty:
 		pass
+	elif type(instruction) == arbre_abstrait.Retourner:
+		gen_retourner(instruction)
 	else:
 		print("type instruction inconnu",type(instruction))
 		exit(1)
@@ -100,6 +117,11 @@ def gen_ecrire(ecrire):
 	gen_expression(ecrire.exp) #on calcule et empile la valeur d'expression
 	nasm_instruction("pop", "eax", "", "", "") #on dépile la valeur d'expression sur eax
 	nasm_instruction("call", "iprintLF", "", "", "") #on envoie la valeur d'eax sur la sortie standard
+
+def gen_retourner(instruction):
+	gen_expression(instruction.exp)
+	nasm_instruction("pop", "eax", "", "", "")
+	nasm_instruction("ret", "", "", "", "")
 
 
 def gen_tantQue(instruction):
@@ -150,6 +172,8 @@ def gen_expression(expression):
 		gen_comparaison(expression)
 	elif type(expression) == arbre_abstrait.Lire:
 		gen_lire()
+	elif type(expression) == arbre_abstrait.AppelFonction:
+		gen_appelFonction(expression)
 	else:
 		print("type d'expression inconnu",type(expression))
 		exit(1)
@@ -162,6 +186,11 @@ def gen_lire():
 	nasm_instruction("mov", "eax" , "sinput")
 	nasm_instruction("call", "readline")
 	nasm_instruction("call", "atoi")
+	nasm_instruction("push", "eax")
+
+
+def gen_appelFonction(appelFonction):
+	nasm_instruction("call", "_"+appelFonction.nom)
 	nasm_instruction("push", "eax")
 
 def gen_comparaison(comparaison):

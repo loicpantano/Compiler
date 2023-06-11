@@ -8,12 +8,14 @@ class Programme:
 	def __init__(self,listeFonctions, listeInstructions):
 		self.listeFonctions = listeFonctions
 		self.listeInstructions = listeInstructions
+		if self.listeFonctions == None:
+			self.listeFonctions = ListeFonctions()
+		if self.listeInstructions == None:
+			self.listeInstructions = ListeInstructions()
 	def afficher(self,indent=0):
 		afficher("<programme>",indent)
-		if self.listeFonctions != None:
-			self.listeFonctions.afficher(indent+1)
-		if self.listeInstructions != None:
-			self.listeInstructions.afficher(indent+1)
+		self.listeFonctions.afficher(indent+1)
+		self.listeInstructions.afficher(indent+1)
 		afficher("</programme>",indent)
 
 class ListeInstructions:
