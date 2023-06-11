@@ -106,6 +106,10 @@ class FloParser(Parser):
 	def branche(self, p):
 		return arbre_abstrait.Si(p.boolean, p.listeInstructions, p.branchage)
 	
+	@_('SI "(" IDENTIFIANT ")" "{" listeInstructions "}" branchage')
+	def branche(self, p):
+		return arbre_abstrait.Si(p.IDENTIFIANT, p.listeInstructions, p.branchage)
+	
 	@_('SINON branche')
 	def branchage(self, p):
 		return arbre_abstrait.SinonSi(p.branche)
@@ -124,6 +128,9 @@ class FloParser(Parser):
 	def instruction(self, p):
 		return arbre_abstrait.TantQue(p.boolean, p.listeInstructions)
 
+	@_('TANTQUE "(" IDENTIFIANT ")" "{" listeInstructions "}"')
+	def instruction(self, p):
+		return arbre_abstrait.TantQue(p.IDENTIFIANT, p.listeInstructions)
 	#Expressions nonboolean -----------------------------------------------------------------------
 		
 	@_('nonboolean "+" produit')
@@ -209,6 +216,7 @@ class FloParser(Parser):
 	@_('IDENTIFIANT "(" ")"')
 	def facteur(self, p):
 		return arbre_abstrait.AppelFonction(p.IDENTIFIANT)
+		
 
 	@_('temp "," listeExpressions')
 	def listeExpressions(self, p):
@@ -255,10 +263,7 @@ class FloParser(Parser):
 	@_('FAUX')
 	def booleanfinal(self, p):
 		return arbre_abstrait.Boolean(False)
-	
-	@_('IDENTIFIANT')
-	def booleanfinal(self,p):
-		return arbre_abstrait.Identifiant(p.IDENTIFIANT)
+
 	
 	@_('"(" boolean ")"')
 	def facteurbool(self, p):
@@ -267,6 +272,10 @@ class FloParser(Parser):
 	@_('NON "(" boolean ")"')
 	def facteurbool(self, p):
 		return arbre_abstrait.Negation(p.boolean)
+	
+	@_('NON "(" IDENTIFIANT ")"')
+	def facteurbool(self, p):
+		return arbre_abstrait.Negation(p.IDENTIFIANT)
 	
 	@_('NON booleanfinal')
 	def facteurbool(self, p):
