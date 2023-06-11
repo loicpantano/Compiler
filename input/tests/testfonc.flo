@@ -4,8 +4,8 @@ entier f(){
 entier g(){
     retourner 4;
 }
-boolean h(){
+booleen h(){
     retourner Vrai;
 }
 ecrire(f()+g());
-ecrire(Non h());
+ecrire(non h());
