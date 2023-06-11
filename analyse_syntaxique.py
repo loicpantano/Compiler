@@ -210,12 +210,16 @@ class FloParser(Parser):
 	
 	#Call not void -----------------------------------------------------------------------
 	@_('IDENTIFIANT "(" listeExpressions ")"')
-	def facteur(self, p):
+	def callfonction(self, p):
 		return arbre_abstrait.AppelFonction(p.IDENTIFIANT, p.listeExpressions)
 	
 	@_('IDENTIFIANT "(" ")"')
-	def facteur(self, p):
+	def callfonction(self, p):
 		return arbre_abstrait.AppelFonction(p.IDENTIFIANT)
+	
+	@_('callfonction')
+	def facteur(self, p):
+		return p.callfonction
 		
 
 	@_('temp "," listeExpressions')
@@ -273,13 +277,13 @@ class FloParser(Parser):
 	def facteurbool(self, p):
 		return arbre_abstrait.Negation(p.boolean)
 	
-	@_('NON "(" IDENTIFIANT ")"')
-	def facteurbool(self, p):
-		return arbre_abstrait.Negation(p.IDENTIFIANT)
-	
 	@_('NON booleanfinal')
 	def facteurbool(self, p):
 		return arbre_abstrait.Negation(p.booleanfinal)
+	
+	@_('NON callfonction')
+	def facteurbool(self, p):
+		return arbre_abstrait.Negation(p.callfonction)
 	
 	@_('produitbool OU facteurbool')
 	def produitbool(self, p):
