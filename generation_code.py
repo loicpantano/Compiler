@@ -201,6 +201,9 @@ def gen_lire():
 
 
 def gen_appelFonction(appelFonction):
+	if table.get_type(appelFonction.nom) == None:
+		print("La fonction ",appelFonction.nom," n'existe pas")
+		exit(1)
 	nasm_instruction("call", "_"+appelFonction.nom)
 	nasm_instruction("push", "eax")
 
