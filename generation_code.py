@@ -124,9 +124,13 @@ def gen_ecrire(ecrire):
 
 def gen_retourner(instruction):
 	if(not inside_function):
-		print("type instruction inconnu",type(instruction))
+		print("Pas dans une fonction: ",type(instruction))
 		exit(1)
 	gen_expression(instruction.exp)
+
+	if(table.get_type(table.current_function) != type(instruction.exp)):
+		print("Type de retour de la fonction ",table.current_function," incorrect")
+		exit(1)
 	nasm_instruction("pop", "eax", "", "", "")
 	nasm_instruction("ret", "", "", "", "")
 
