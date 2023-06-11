@@ -145,12 +145,14 @@ class Operation:
 		afficher("</operation>",indent)
 class Entier:
 	def __init__(self,valeur):
+		self.str = "entier"
 		self.valeur = valeur
 	def afficher(self,indent=0):
 		afficher("[Entier:"+str(self.valeur)+"]",indent)
 
 class Boolean:
 	def __init__(self, valeur):
+		self.str = "booleen"
 		self.valeur = valeur
 
 	def afficher(self, indent=0):
@@ -189,19 +191,6 @@ class Identifiant:
 	def afficher(self,indent=0):
 		afficher("[Identifiant:"+self.nom+"]",indent)
 
-class AppelFonction:
-	def __init__(self, nom, listeExpressions = None):
-		self.nom = nom
-		self.listeExpressions = listeExpressions
-
-	def afficher(self, indent=0):
-		afficher("<AppelFonction>", indent)
-		afficher("<" +self.nom + ">", indent+1)
-		if(self.listeExpressions != None):
-			self.listeExpressions.afficher(indent+2)
-		afficher("</" +self.nom + ">", indent+1)
-		afficher("</AppelFonction>", indent)
-
 class ListeExpressions:
 	def __init__(self ):
 		self.expressions = []
@@ -211,6 +200,20 @@ class ListeExpressions:
 		for expression in self.expressions:
 			expression.afficher(indent+1)
 		afficher("</ListeExpressions>", indent)
+
+class AppelFonction:
+	def __init__(self, nom, listeExpressions = ListeExpressions()):
+		self.nom = nom
+		self.listeExpressions = listeExpressions
+
+	def afficher(self, indent=0):
+		afficher("<AppelFonction>", indent)
+		afficher("<" +self.nom + ">", indent+1)
+		self.listeExpressions.afficher(indent+2)
+		afficher("</" +self.nom + ">", indent+1)
+		afficher("</AppelFonction>", indent)
+
+
 
 class Fonction:
 	def __init__(self, type, nom, listeParametres, listeInstructions):
@@ -239,9 +242,9 @@ class ListeParametres:
 		afficher("</ListeParametres>", indent)
 
 class Parametre:
-	def __init__(self, nom):
+	def __init__(self, nom, type):
 		self.nom = nom
-
+		self.type = type
 	def afficher(self, indent=0):
 		afficher("<Parametre>", indent)
 		afficher("<" +self.nom + ">", indent+1)

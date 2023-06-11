@@ -206,7 +206,7 @@ class FloParser(Parser):
 
 	@_('TYPE IDENTIFIANT')
 	def parametre(self, p):
-		return arbre_abstrait.Parametre(p.IDENTIFIANT)
+		return arbre_abstrait.Parametre(p.IDENTIFIANT, p.TYPE)
 	
 	#Call not void -----------------------------------------------------------------------
 	@_('IDENTIFIANT "(" listeExpressions ")"')

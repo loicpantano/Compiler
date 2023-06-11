@@ -75,7 +75,7 @@ def gen_programme(programme):
 
 def gen_listeFonctions(listeFonctions):
 	for fonction in listeFonctions.fonctions:
-		table.add_symbol(fonction.nom, fonction.type)
+		table.add_symbol(fonction.nom, fonction.type, fonction.listeParametres.parametres)
 	for fonction in listeFonctions.fonctions:
 		gen_fonction(fonction)
 	
@@ -110,6 +110,8 @@ def gen_instruction(instruction):
 		pass
 	elif type(instruction) == arbre_abstrait.Retourner:
 		gen_retourner(instruction)
+	elif type(instruction) == arbre_abstrait.AppelFonction:
+		gen_appelFonction(instruction)
 	else:
 		print("type instruction inconnu",type(instruction))
 		exit(1)
@@ -127,10 +129,16 @@ def gen_retourner(instruction):
 		print("Pas dans une fonction: ",type(instruction))
 		exit(1)
 	gen_expression(instruction.exp)
-
-	if(table.get_type(table.current_function) != type(instruction.exp)):
-		print("Type de retour de la fonction ",table.current_function," incorrect")
-		exit(1)
+	if(type(instruction.exp) != arbre_abstrait.AppelFonction):
+		if(table.get_type(table.current_function) != instruction.exp.str):
+			print(table.get_type(table.current_function))
+			print(instruction.exp.str)
+			print("Type de retour de la fonction ",table.current_function," incorrect")
+			exit(1)
+	else:
+		if(table.get_type(instruction.exp.nom) != table.get_type(table.current_function)):
+			print("Type de retour de la fonction ",table.current_function," incorrect")
+			exit(1)
 	nasm_instruction("pop", "eax", "", "", "")
 	nasm_instruction("ret", "", "", "", "")
 
@@ -203,6 +211,9 @@ def gen_lire():
 def gen_appelFonction(appelFonction):
 	if table.get_type(appelFonction.nom) == None:
 		print("La fonction ",appelFonction.nom," n'existe pas")
+		exit(1)
+	if table.get_nbArgs(appelFonction.nom) != len(appelFonction.listeExpressions.expressions):
+		print("Nombre d'arguments incorrect pour la fonction ",appelFonction.nom)
 		exit(1)
 	nasm_instruction("call", "_"+appelFonction.nom)
 	nasm_instruction("push", "eax")

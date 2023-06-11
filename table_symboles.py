@@ -1,13 +1,23 @@
 class SymbolTable:
     def __init__(self):
-        self.symbols = {}
+        self.symbolstype = {}
+        self.symbolsmemory = {}
+        self.symbolargstype = {}
+
+
         self.current_function = None
 
-    def add_symbol(self, name, type):
-        self.symbols[name] = type
+    def add_symbol(self, name, type, args):
+        self.symbolstype[name] = type
+        self.symbolargstype[name] = [param.type for param in args]
+        self.symbolsmemory[name] = len(self.symbolsmemory) * 4
+
 
     def get_type(self, name):
-        return self.symbols.get(name)
+        return self.symbolstype.get(name)
+    
+    def get_nbArgs(self, name):
+        return len(self.symbolargstype.get(name))
 
     def set_current_function(self, function_name):
         self.current_function = function_name
