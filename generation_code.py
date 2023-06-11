@@ -13,6 +13,7 @@ def nom_nouvelle_etiquette() :
 
 afficher_table = False
 afficher_nasm = False
+inside_function = True
 table = table_symboles.SymbolTable()
 """
 Un print qui ne fonctionne que si la variable afficher_table vaut Vrai.
@@ -63,6 +64,8 @@ def gen_programme(programme):
 	printifm('section\t.text')
 	printifm('global _start')
 	gen_listeFonctions(programme.listeFonctions)
+	global inside_function
+	inside_function = False
 	printifm('_start:')
 	gen_listeInstructions(programme.listeInstructions)
 	nasm_instruction("mov", "eax", "1", "", "1 est le code de SYS_EXIT") 
@@ -75,8 +78,9 @@ def gen_listeFonctions(listeFonctions):
 		table.add_symbol(fonction.nom, fonction.type)
 	for fonction in listeFonctions.fonctions:
 		gen_fonction(fonction)
-
+	
 def gen_fonction(fonction):
+	table.set_current_function(fonction.nom)
 	nasm_instruction("_"+fonction.nom+":", "", "", "", "")
 	gen_listeInstructions(fonction.listeInstructions)
 	
@@ -119,6 +123,9 @@ def gen_ecrire(ecrire):
 	nasm_instruction("call", "iprintLF", "", "", "") #on envoie la valeur d'eax sur la sortie standard
 
 def gen_retourner(instruction):
+	if(not inside_function):
+		print("type instruction inconnu",type(instruction))
+		exit(1)
 	gen_expression(instruction.exp)
 	nasm_instruction("pop", "eax", "", "", "")
 	nasm_instruction("ret", "", "", "", "")

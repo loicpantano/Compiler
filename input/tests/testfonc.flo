@@ -1,4 +1,5 @@
 entier f(){
-retourner 3 ;
+	retourner 3;
 }
 ecrire(f());
+retourner 5;
